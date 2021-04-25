@@ -5,7 +5,11 @@ namespace ancoopergames
 {
   public class Signal : MonoBehaviour
   {
+    public Sprite[] SignalSprites;
     private float signal;
+    private SpriteRenderer spriteRenderer;
+    public int value;
+
     public float Value
     {
       get { return signal; }
@@ -13,25 +17,22 @@ namespace ancoopergames
         ChangeSignal(signal);
       }
     }
-
+    void Start(){
+      spriteRenderer = GetComponent<SpriteRenderer>();
+    }
     private void ChangeSignal(float signal)
     {
-      var enableColor = GreenColor;
-      if(signal < 0.66f && signal >= 0.33) enableColor = YellowColor;
-      if(signal < 0.33) enableColor = RedColor;
+      if (signal > 0.8f) spriteRenderer.sprite = SignalSprites[0];
+      else if (signal > 0.6f) spriteRenderer.sprite = SignalSprites[1];
+      else if (signal > 0.4f) spriteRenderer.sprite = SignalSprites[2];
+      else if (signal > 0.2f) spriteRenderer.sprite = SignalSprites[3];
+      else if (signal > Mathf.Epsilon) spriteRenderer.sprite = SignalSprites[4];
+      else spriteRenderer.sprite = SignalSprites[5];
 
-      Bars[4].color = signal>0.8f ? enableColor : DisableColor;
-      Bars[3].color = signal>0.6f ? enableColor : DisableColor;
-      Bars[2].color = signal>0.4f ? enableColor : DisableColor;
-      Bars[1].color = signal>0.2f ? enableColor : DisableColor;
-      Bars[0].color = signal>Mathf.Epsilon ? enableColor : DisableColor;
-    }
-
-    public Color GreenColor;
-    public Color YellowColor;
-    public Color RedColor;
-    public Color DisableColor;
-    public SpriteRenderer[] Bars;
-    
+      if (signal > 0.8f) value = 0;
+      else if(signal > 0.4f) value = 3;
+      else if(signal > Mathf.Epsilon) value = 4;
+      else value = 5;
+    }    
   }
 }

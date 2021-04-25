@@ -6,11 +6,8 @@ namespace ancoopergames
   {
     public Transform Antenna;
     public Signal AntennaSignal;
-    public Color GreenColor;
-    public Color YellowColor;
-    public Color RedColor;
-    public Color LostSignalColor;
-
+    public Sprite[] AntennaSprites;
+    public int Value = 0;
     public enum NavState { GREEN, YELLOW, RED, LOSTSIGNAL }
     private NavState state;
     public NavState State
@@ -48,16 +45,17 @@ namespace ancoopergames
       switch (state)
       {
         case NavState.GREEN:
-          spriteRenderer.color = GreenColor;
+          spriteRenderer.sprite = AntennaSprites[0];
           break;
         case NavState.YELLOW:
-          spriteRenderer.color = YellowColor;
+          spriteRenderer.sprite = AntennaSprites[1];
           break;
         case NavState.RED:
-          spriteRenderer.color = RedColor;
+          spriteRenderer.sprite = AntennaSprites[2];
           break;
         case NavState.LOSTSIGNAL:
-          spriteRenderer.color = LostSignalColor;
+          spriteRenderer.sprite = AntennaSprites[3];
+          Value = 5;
           break;
       }
     }
@@ -71,19 +69,28 @@ namespace ancoopergames
       get { return offset; }
       set
       {
-        if (State == NavState.LOSTSIGNAL) return;
+        var sigValue = AntennaSignal.value;
+        if (State == NavState.LOSTSIGNAL)
+          return;
         offset = value;
         if (offset.sqrMagnitude > 0.2f) offset = offset.normalized * Mathf.Sqrt(0.2f);
         if (offset.sqrMagnitude < 0.025f)
+        {
           State = NavState.GREEN;
+          Value = Mathf.Max(0, sigValue);
+        }
         else if (offset.sqrMagnitude < 0.075f)
+        {
           State = NavState.YELLOW;
+          Value = Mathf.Max(1, sigValue);
+        }
         else
+        {
           State = NavState.RED;
+          Value = Mathf.Max(2, sigValue);
+        }
 
-
-
-        Antenna.transform.localPosition = (Vector3)offset;
+        Antenna.transform.localPosition = (Vector3)offset * 2.65f;
       }
     }
 
@@ -142,10 +149,12 @@ namespace ancoopergames
     private void Drift(float deltaTime, float amount = 1f)
     {
       var driftVector = new Vector2(Random.Range(-amount, amount), Random.Range(-amount, amount)) * deltaTime;
-      if (stability > deltaTime){
+      if (stability > deltaTime)
+      {
         stability -= deltaTime;
         driftVector -= Offset.normalized * 0.03f * deltaTime;
-      }else
+      }
+      else
         driftVector += Offset.normalized * 0.01f * deltaTime;
       Offset += driftVector;
     }

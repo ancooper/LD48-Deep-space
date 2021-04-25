@@ -6,16 +6,24 @@ namespace ancoopergames
 {
   public class Player : MonoBehaviour
   {
+    public Sprite[] BodySprites;
+    public SpriteRenderer Body;
     private Rigidbody2D body;
+    private Animator animator;
     private PlayerState state;
     private Vector3 speed = Vector3.right * 2f;
     private float dashVelocity;
     private float dashTime = 0f;
     private int batteryValue;
-    public int Battery {
-      get {return batteryValue;}
-      set {batteryValue = Mathf.Clamp(value, 0, 5);
+    public int Battery
+    {
+      get { return batteryValue; }
+      set
+      {
+        batteryValue = Mathf.Clamp(value, 0, 5);
         Level.Instance.ChargeGame.Value = batteryValue;
+
+        Body.sprite = BodySprites[batteryValue];
       }
     }
     private int dashPower = 1;
@@ -25,6 +33,7 @@ namespace ancoopergames
     void Start()
     {
       body = GetComponent<Rigidbody2D>();
+      animator = GetComponent<Animator>();
       state = PlayerState.MOVING;
       Battery = 5;
     }
@@ -55,7 +64,10 @@ namespace ancoopergames
       if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
         Level.Instance.NuclearGame.Down();
       if (Input.GetKeyDown(KeyCode.E))
+      {
+        Level.Instance.NuclearPanel.BigPanel.Hide();
         Move();
+      }
     }
 
     private void Charging()
@@ -63,7 +75,10 @@ namespace ancoopergames
       if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         Battery++;
       if (Input.GetKeyDown(KeyCode.E))
+      {
+        Level.Instance.ChargePanel.BigPanel.Hide();
         Move();
+      }
     }
 
     private void Navigating()
@@ -77,7 +92,10 @@ namespace ancoopergames
       if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
         Level.Instance.NavGame.Down();
       if (Input.GetKeyDown(KeyCode.E))
+      {
+        Level.Instance.NavigationPanel.BigPanel.Hide();
         Move();
+      }
     }
 
     private void Move()
@@ -107,9 +125,9 @@ namespace ancoopergames
     private void Moving()
     {
       var velocity = 0f;
-      if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A) && dashTime > Mathf.Epsilon)
+      if ((Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) && dashTime < Mathf.Epsilon)
         velocity--;
-      if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D) && dashTime > Mathf.Epsilon)
+      if ((Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D)) && dashTime < Mathf.Epsilon)
         velocity++;
       if (Input.GetKeyDown(KeyCode.Space) && velocity != 0 && dashTime < Mathf.Epsilon && Battery >= dashPower)
       {
@@ -119,28 +137,61 @@ namespace ancoopergames
         //Discharge battery
       }
 
-      if (Input.GetKeyDown(KeyCode.E))
-        Interract();
+      if (Mathf.Abs(velocity) < Mathf.Epsilon && dashTime < Mathf.Epsilon)
+      {
+        animator.Play("player_idle");
+        transform.localScale = new Vector3(2, 2, 2);
+      }
+      else
+      {
+        animator.Play("player_run");
+        transform.localScale = velocity + dashVelocity > 0 ? new Vector3(2, 2, 2) : new Vector3(-2, 2, 2);
+      }
 
-      if (dashTime > Mathf.Epsilon)
+      if (dashTime > 0)
       {
         dashTime -= Time.deltaTime;
         body.velocity = speed * dashVelocity;
       }
       else
       {
+        dashVelocity = 0;
         body.velocity = speed * velocity;
       }
+
+      if (Input.GetKeyDown(KeyCode.E))
+        if (Interract())
+        {
+          body.velocity = Vector3.zero;
+          dashTime = 0;
+        }
     }
 
-    private void Interract()
+    private bool Interract()
     {
+      var res = false;
       if (Level.Instance.NavigationPanel.Near)
+      {
         state = PlayerState.NAVIGATION;
+        Level.Instance.NavigationPanel.BigPanel.Show();
+        animator.Play("player_work");
+        res = true;
+      }
       if (Level.Instance.ChargePanel.Near)
+      {
         state = PlayerState.CHARDGING;
+        Level.Instance.ChargePanel.BigPanel.Show();
+        animator.Play("player_work");
+        res = true;
+      }
       if (Level.Instance.NuclearPanel.Near)
+      {
         state = PlayerState.REACTOR;
+        Level.Instance.NuclearPanel.BigPanel.Show();
+        animator.Play("player_work");
+        res = true;
+      }
+      return res;
     }
   }
 }

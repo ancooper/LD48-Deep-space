@@ -6,7 +6,7 @@ namespace ancoopergames
   {
     public Transform Bar;
     public Color GreenColor;
-    public Color YellowColor;
+    public Color BlueColor;
     public Color RedColor;
 
     void Start()
@@ -17,20 +17,15 @@ namespace ancoopergames
     private void ChangeTemp()
     {
       var position = Bar.transform.localPosition;
-      position.y = Offset;
+      position.y = Offset * 2.65f;
       Bar.transform.localPosition = position;
-      // switch (state)
-      // {
-      //   case NavState.GREEN:
-      //     spriteRenderer.color = GreenColor;
-      //     break;
-      //   case NavState.YELLOW:
-      //     spriteRenderer.color = YellowColor;
-      //     break;
-      //   case NavState.RED:
-      //     spriteRenderer.color = RedColor;
-      //     break;
-      // }
+
+      if (Mathf.Abs(Offset) < 0.15f)
+        spriteRenderer.color = GreenColor;
+      else if (Offset < 0)
+        spriteRenderer.color = BlueColor;
+      else
+        spriteRenderer.color = RedColor;
     }
 
     private float offset;
@@ -40,14 +35,16 @@ namespace ancoopergames
     public float Offset
     {
       get { return offset; }
-      set {offset = value;
+      set
+      {
+        offset = Mathf.Clamp(value, -0.43f, 0.43f);
         ChangeTemp();
       }
     }
 
     private void Stabilising()
     {
-      if(Mathf.Abs(offset) < 0.5f)
+      if (Mathf.Abs(offset) < 0.5f)
         stability = 3f;
     }
 
@@ -65,16 +62,18 @@ namespace ancoopergames
 
     void Update()
     {
-        Drift(Time.deltaTime, 0.4f);
+      Drift(Time.deltaTime, 0.4f);
     }
 
     private void Drift(float deltaTime, float amount = 1f)
     {
       var driftValue = Random.Range(-amount, amount) * deltaTime;
-      if (stability > deltaTime){
+      if (stability > deltaTime)
+      {
         stability -= deltaTime;
         driftValue -= Mathf.Sign(Offset) * 0.03f * deltaTime;
-      }else
+      }
+      else
         driftValue += Mathf.Sign(Offset) * 0.01f * deltaTime;
       Offset += driftValue;
     }
