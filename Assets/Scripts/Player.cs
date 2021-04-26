@@ -7,6 +7,8 @@ namespace ancoopergames
   public class Player : MonoBehaviour
   {
     public GameObject GameOverObject;
+    public GameObject VictoryObject;
+    public Transform SpaceObject;
     public Sprite[] BodySprites;
     public SpriteRenderer Body;
     private Rigidbody2D body;
@@ -31,8 +33,9 @@ namespace ancoopergames
     }
     private int dashPower = 1;
     private bool go;
+    private float startTime;
 
-    public enum PlayerState { MOVING, CHARDGING, REACTOR, NAVIGATION, GAMEOVER };
+    public enum PlayerState { MOVING, CHARDGING, REACTOR, NAVIGATION, GAMEOVER, VICTORY };
 
     void Start()
     {
@@ -41,9 +44,14 @@ namespace ancoopergames
       state = PlayerState.MOVING;
       Battery = 5;
       go = false;
+      startTime = Time.time;
     }
     void Update()
     {
+      SpaceObject.position = new Vector3(-7.5f - (Time.time - startTime)/600f*430f, 0f, 3f);
+      if(Time.time - startTime > 10f*60f)
+        Victory();
+
       if (go) return;
       switch (state)
       {
@@ -64,6 +72,11 @@ namespace ancoopergames
           Fade.Instance.FadeOut(0.5f);
           Invoke("ShowGameOver", 0.5f);
           break;
+        case PlayerState.VICTORY:
+          go = true;
+          Fade.Instance.FadeOut(0.5f);
+          Invoke("ShowVictory", 0.5f);
+          break;
       }
     }
     public void GameOver(GameOverTitle title)
@@ -71,10 +84,18 @@ namespace ancoopergames
       this.title = title;
       state = PlayerState.GAMEOVER;
     }
+    public void Victory(){
+      state = PlayerState.VICTORY;
+    }
     void ShowGameOver()
     {
       GameOverObject.SetActive(true);
       GameOverObject.GetComponent<GameOver>().SetGameOver(title);
+      Level.Instance.gameObject.SetActive(false);
+    }
+    void ShowVictory()
+    {
+      VictoryObject.SetActive(true);
       Level.Instance.gameObject.SetActive(false);
     }
     private void Termocontrolling()

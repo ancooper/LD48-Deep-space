@@ -3,24 +3,13 @@ using UnityEngine.SceneManagement;
 
 namespace ancoopergames
 {
-  public enum GameOverTitle { OH, CD, SG };
-  public class GameOver : MonoBehaviour
+  public class Victory : MonoBehaviour
   {
-    public GameObject Overheated;
-    public GameObject CooledDown;
-    public GameObject SignalIsGone;
-
     private bool fadeOut = false;
 
     void Start()
     {
       Fade.Instance.FadeIn(0.5f);
-    }
-    public void SetGameOver(GameOverTitle title)
-    {
-      Overheated.SetActive(title == GameOverTitle.OH);
-      CooledDown.SetActive(title == GameOverTitle.CD);
-      SignalIsGone.SetActive(title == GameOverTitle.SG);
     }
     void Update()
     {
