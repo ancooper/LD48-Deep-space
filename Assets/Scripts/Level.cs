@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace ancoopergames
@@ -16,6 +14,7 @@ namespace ancoopergames
     public static Level Instance;
     void Start()
     {
+      Fade.Instance.FadeIn(0.5f);
       Instance = GetComponent<Level>();
     }
   }

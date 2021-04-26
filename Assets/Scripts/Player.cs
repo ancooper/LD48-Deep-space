@@ -6,10 +6,12 @@ namespace ancoopergames
 {
   public class Player : MonoBehaviour
   {
+    public GameObject GameOverObject;
     public Sprite[] BodySprites;
     public SpriteRenderer Body;
     private Rigidbody2D body;
     private Animator animator;
+    private GameOverTitle title;
     private PlayerState state;
     private Vector3 speed = Vector3.right * 2f;
     private float dashVelocity;
@@ -21,14 +23,16 @@ namespace ancoopergames
       set
       {
         batteryValue = Mathf.Clamp(value, 0, 5);
-        Level.Instance.ChargeGame.Value = batteryValue;
+        if(Level.Instance != null)
+          Level.Instance.ChargeGame.Value = batteryValue;
 
         Body.sprite = BodySprites[batteryValue];
       }
     }
     private int dashPower = 1;
+    private bool go;
 
-    public enum PlayerState { MOVING, CHARDGING, REACTOR, NAVIGATION };
+    public enum PlayerState { MOVING, CHARDGING, REACTOR, NAVIGATION, GAMEOVER };
 
     void Start()
     {
@@ -36,9 +40,11 @@ namespace ancoopergames
       animator = GetComponent<Animator>();
       state = PlayerState.MOVING;
       Battery = 5;
+      go = false;
     }
     void Update()
     {
+      if (go) return;
       switch (state)
       {
         case PlayerState.MOVING:
@@ -53,10 +59,24 @@ namespace ancoopergames
         case PlayerState.REACTOR:
           Termocontrolling();
           break;
+        case PlayerState.GAMEOVER:
+          go = true;
+          Fade.Instance.FadeOut(0.5f);
+          Invoke("ShowGameOver", 0.5f);
+          break;
       }
-
     }
-
+    public void GameOver(GameOverTitle title)
+    {
+      this.title = title;
+      state = PlayerState.GAMEOVER;
+    }
+    void ShowGameOver()
+    {
+      GameOverObject.SetActive(true);
+      GameOverObject.GetComponent<GameOver>().SetGameOver(title);
+      Level.Instance.gameObject.SetActive(false);
+    }
     private void Termocontrolling()
     {
       if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
@@ -134,7 +154,6 @@ namespace ancoopergames
         dashVelocity = velocity * 3f;
         dashTime = 0.2f;
         Battery -= dashPower;
-        //Discharge battery
       }
 
       if (Mathf.Abs(velocity) < Mathf.Epsilon && dashTime < Mathf.Epsilon)

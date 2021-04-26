@@ -38,6 +38,8 @@ namespace ancoopergames
       set
       {
         offset = Mathf.Clamp(value, -0.43f, 0.43f);
+        if (offset < -0.425) Level.Instance.Player.GameOver(GameOverTitle.CD);
+        if (offset > 0.425) Level.Instance.Player.GameOver(GameOverTitle.OH);
         ChangeTemp();
       }
     }

@@ -56,8 +56,14 @@ namespace ancoopergames
         case NavState.LOSTSIGNAL:
           spriteRenderer.sprite = AntennaSprites[3];
           Value = 5;
+          GameOver();
           break;
       }
+    }
+
+    private void GameOver()
+    {
+      Level.Instance.Player.GameOver(GameOverTitle.SG);
     }
 
     private Vector2 offset;

@@ -164,6 +164,15 @@ TextureImporter:
   - first:
       213: -1988828135353101337
     second: reactor_sel
+  - first:
+      213: 4971049064686688367
+    second: earth
+  - first:
+      213: 4204374477710404856
+    second: moon
+  - first:
+      213: -3149050133103254212
+    second: starship
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -1365,7 +1374,7 @@ TextureImporter:
         width: 37
         height: 20
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1386,7 +1395,7 @@ TextureImporter:
         width: 39
         height: 22
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1394,6 +1403,69 @@ TextureImporter:
       bones: []
       spriteID: 7e3d9f029534664e0800000000000000
       internalID: -1988828135353101337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: earth
+      rect:
+        serializedVersion: 2
+        x: 680
+        y: 1848
+        width: 171
+        height: 172
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f6810bd59c6bcf440800000000000000
+      internalID: 4971049064686688367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: moon
+      rect:
+        serializedVersion: 2
+        x: 902
+        y: 1969
+        width: 47
+        height: 47
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8fca5aecf40f85a30800000000000000
+      internalID: 4204374477710404856
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: starship
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 1522
+        width: 74
+        height: 208
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c35eb7c96935c44d0800000000000000
+      internalID: -3149050133103254212
       vertices: []
       indices: 
       edges: []
